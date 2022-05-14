@@ -47,6 +47,11 @@ const useStyles = makeStyles({
 });
 
 export default function FormTask(props: IFormTaskpProps) {
+  const [error, setError] = React.useState({
+    title:'',
+    description:'',
+    priority:'',
+  });
   const [title, setTitle] = React.useState('');
   const [priority, setPriority] = React.useState('low');
   const [description, setDescription] = React.useState<string>('');
@@ -67,15 +72,29 @@ export default function FormTask(props: IFormTaskpProps) {
     setTitle(event.target.value);
   };
   const handleSubmit= () => {
-    let idRandom = nextId();
-    let task  = {
-      title:title,
-      priority:priority,
-      description:description,
-      dueDate:dueDate,
-      id: props.type==='add' ?  idRandom : props.task?.id
-    }
-    props.handleSubmit(task)
+
+    if (!title){
+      let objectError = {
+        title:'please enter title'
+      }
+      setError({...error,...objectError})
+    }else{
+      let idRandom = nextId();
+      let task  = {
+        title:title,
+        priority:priority,
+        description:description,
+        dueDate:dueDate,
+        id: props.type==='add' ?  idRandom : props.task?.id
+      }
+
+      setError({
+        title:'',
+        description:'',
+        priority:''
+    })
+      props.handleSubmit(task)
+    } 
   };
 
   React.useEffect(()=>{
@@ -91,10 +110,13 @@ export default function FormTask(props: IFormTaskpProps) {
   return (
     <div className={classes.wrapper} style={{paddingTop : props.type ==='detail' ? 20 : 0}}>
       <Grid container>
-        <Grid xs={12}>
+        <Grid xs={12} style={{height:80}}>
           {/* low, normal and high. */}
           <FormControl variant="standard" fullWidth={true}>
-            <OutlinedInput onChange={handleChangeTitle} value={title} placeholder='Enter the title'/>
+            <OutlinedInput onChange={handleChangeTitle} value={title} placeholder='Enter the title' error={(error && error.title) ? true : false }/>
+            {(error && error.title) ? <span style={{marginLeft:10,marginTop:5,color:'#ff1744'}}>
+              {error.title}
+            </span> : '' }
           </FormControl>
         </Grid>
         <FormControl variant="standard">
