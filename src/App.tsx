@@ -143,7 +143,7 @@ export default function App() {
   React.useEffect(() => {
     let storeLocalStorage = store.getAllTask();
     setListTask(storeLocalStorage)
-  }, [store])
+  }, [])
   React.useEffect(() => {
     setListTaskChecked([])
   }, [tabValue])
